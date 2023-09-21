@@ -24,27 +24,23 @@ const foodsGet = async function () {
     let jsonFoodData = {};
 
     if (foodData && foodData.length > 0) {
-      // Crie um objeto para mapear os alimentos por id
       let foodMap = {};
 
       foodData.forEach((item) => {
         if (!foodMap[item.id]) {
-          // Se o id não existe no mapa, crie um novo objeto com a estrutura desejada
           foodMap[item.id] = {
             id: item.id,
-            title: "title",
-            price: "29.9",
-            image: "image",
-            type: "ACAI",
+            title: item.title,
+            price: item.price,
+            image: item.image,
+            type: item.type,
             ingredients: [],
           };
         }
 
-        // Adicione o ingrediente atual à lista de ingredientes
         foodMap[item.id].ingredients.push(item.ingredient);
       });
 
-      // Converta o mapa de alimentos em uma lista
       let foodList = Object.values(foodMap);
 
       jsonFoodData.status = 200;
