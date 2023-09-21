@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodType {
+  id   Int       @id @unique @default(autoincrement())
+  type FOOD_TYPE
+
+  Food Food[]
+
+  @@map("tbl_food_type")
+}
+
+enum FOOD_TYPE {
+  ACAI
+  SNACK
+  DRINK
+  DIVERSE
+}
+
+model Food {
+  id    Int     @id @unique @default(autoincrement())
+  image String  @db.Text
+  title String  @db.VarChar(100)
+  price Decimal
+
+  idFoodType     Int              @map("id_food_type")
+  FoodType       FoodType         @relation(fields: [idFoodType], references: [id])
+  FoodIngredient FoodIngredient[]
+
+  @@map("tbl_food")
+}
+
+model FoodIngredient {
+  id         Int    @id @unique @default(autoincrement())
+  ingredient String @db.VarChar(150)
+
+  idFood Int  @map("id_food")
+  Food   Food @relation(fields: [idFood], references: [id])
+
+  @@map("tbl_food_ingredient")
+}
