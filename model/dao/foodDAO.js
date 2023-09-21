@@ -52,6 +52,23 @@ const getFoods = async function () {
   }
 };
 
+const getFoodsByType = async function (foodType) {
+  const sql = `
+  SELECT tbl_food.id, tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
+  INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
+  INNER JOIN tbl_food_type ON tbl_food_type.id = tbl_food.id_food_type
+  WHERE tbl_food_type.type = "${foodType}";
+  `;
+
+  const responseFood = await prisma.$queryRawUnsafe(sql);
+
+  if (responseFood) {
+    return responseFood;
+  } else {
+    return false;
+  }
+};
+
 const getFoodById = async function (foodId) {
   const sql = `
   SELECT tbl_food.id, tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
@@ -69,111 +86,111 @@ const getFoodById = async function (foodId) {
   }
 };
 
-/*
-async function insertHospital(hospitalData) {
-  try {
-    //Address Insert
-    let addressInsert = await addressDAO.insertAddress(hospitalData.address);
-    let addressId = addressInsert.id;
+// const updateFood = async function (foodId, foodData) {
+//   try {
+//     const oldFoodData = await prisma.food.findUnique({
+//       where: {
+//         id: Number(foodId),
+//       },
+//       include: {
+//         FoodIngredient: {
+//           select: {
+//             idFood: true,
+//             ingredient: true,
+//           },
+//         },
+//       },
+//     });
 
-    //Hospital Insert
-    const insertHospitalData = await prisma.hospital.create({
-      data: {
-        name: hospitalData.hospital.name,
-        cnpj: hospitalData.hospital.cnpj,
-        email: hospitalData.hospital.email,
-        websiteUrl: hospitalData.hospital.website,
-        password: hospitalData.hospital.password,
-        idAddress: addressId,
+//     console.log("ANTIGOOOOOOOOOOOOOO");
+//     console.log(oldFoodData);
+
+//     const updatedFood = await prisma.food.update({
+//       where: {
+//         id: Number(foodId),
+//       },
+//       data: {
+//         // UPDATE FOOD
+//         title: foodData.title,
+//         price: foodData.price,
+//         image: foodData.image,
+//         // UPDATE FOOD INGREDIENTS
+//         FoodIngredient: {
+//           update: {
+//             where: {
+//               id: Number(foodId),
+//             },
+//             data: {
+//               ingredient: foodData.ingredients[0],
+//             },
+//           },
+//         },
+//       },
+//     });
+
+//     console.log("NOVOOOOOOOOOOOOOOO");
+//     console.log(updatedFood);
+
+//     return true;
+//   } catch (error) {
+//     console.error("Erro ao atualizar o food:", error);
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// };
+
+const updateFood = async function (foodId, foodData) {
+  try {
+    // Crie um array de promessas para as operações de criação de ingredientes
+    const createIngredientPromises = foodData.ingredients.map(
+      async (ingredientName) => {
+        return prisma.foodIngredient.create({
+          data: {
+            ingredient: ingredientName,
+            idFood: Number(foodId),
+            // Food: {
+            //   connect: {
+            //     id: Number(foodId)
+            //   }
+            // }
+          },
+        });
+      }
+    );
+
+    // Aguarde a resolução de todas as promessas de criação de ingredientes
+    await Promise.all(createIngredientPromises);
+
+    // Exclua todos os ingredientes associados a este alimento
+    await prisma.foodIngredient.deleteMany({
+      where: {
+        idFood: Number(foodId),
       },
     });
-    let hospitalId = insertHospitalData.id;
 
-    //Phone Insert
-    let phoneInsert = await phoneDAO.insertPhone(
-      hospitalData.hospital,
-      hospitalId
-    );
+    // Atualize os dados do alimento
+    await prisma.food.update({
+      where: {
+        id: Number(foodId),
+      },
+      data: {
+        title: foodData.title,
+        price: foodData.price,
+        image: foodData.image,
+      },
+    });
 
-    //Site Insert
-    let insertSite = await siteDAO.insertSite(hospitalData.hospital);
-
-    let donationSiteId = insertSite[0].id;
-    let otherDonationSiteId = insertSite[1].id;
-
-    //Hospital Site Insert
-    let insertHospitalSite = await hospitalSiteDAO.insertHospitalSite(
-      hospitalId,
-      donationSiteId,
-      otherDonationSiteId
-    );
-
-    //Photo Insert
-    let insertPhoto = await photoDAO.insertPhoto(
-      hospitalData.hospital,
-      hospitalId
-    );
-
+    console.log("Atualização concluída com sucesso.");
     return true;
   } catch (error) {
-    console.error("Erro ao criar o hospital:", error);
+    console.error("Erro ao atualizar o alimento:", error);
   } finally {
     await prisma.$disconnect();
   }
-}
-
-const getHospitalById = async function (hospitalId) {
-  console.log(hospitalId);
-  let sql = `
-  SELECT tbl_hospital.id,
-  tbl_hospital.name,
-  tbl_hospital.cnpj,
-  tbl_hospital.email,
-  tbl_phone.phone,
-  tbl_hospital.website_url,
-  tbl_photo.url,
-  tbl_address.cep,
-  tbl_address.uf,
-  tbl_address.city,
-  tbl_address.neighborhood,
-  tbl_address.street,
-  tbl_address.number,
-  tbl_address.complement,
-  (
-      SELECT site
-      FROM tbl_hospital_site
-          INNER JOIN tbl_site ON tbl_hospital_site.id_site = tbl_site.id
-      WHERE tbl_hospital_site.id_hospital = tbl_hospital.id
-      ORDER BY tbl_site.id
-      LIMIT 1
-  ) AS donationSite,
-  (
-      SELECT site
-      FROM tbl_hospital_site
-          INNER JOIN tbl_site ON tbl_hospital_site.id_site = tbl_site.id
-      WHERE tbl_hospital_site.id_hospital = tbl_hospital.id
-      ORDER BY tbl_site.id
-      LIMIT 1 OFFSET 1
-  ) AS otherDonationSite
-FROM tbl_hospital
-  INNER JOIN tbl_phone ON tbl_phone.id_hospital = tbl_hospital.id
-  INNER JOIN tbl_photo ON tbl_photo.id_hospital = tbl_hospital.id
-  INNER JOIN tbl_address ON tbl_hospital.id_address = tbl_address.id
-WHERE tbl_hospital.id = ${hospitalId};
-  `;
-
-  console.log(sql);
-
-  let responseHospital = await prisma.$queryRawUnsafe(sql);
-
-  console.log("response hospital: ", responseHospital);
-
-  if (responseHospital) {
-    return responseHospital;
-  } else {
-    return false;
-  }
 };
+
+/*
+
 
 async function updateHospital(hospitalId, hospitalData) {
   try {
@@ -281,5 +298,7 @@ async function updateHospital(hospitalId, hospitalData) {
 module.exports = {
   insertFood,
   getFoods,
+  getFoodsByType,
   getFoodById,
+  updateFood,
 };

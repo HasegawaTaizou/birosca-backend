@@ -40,8 +40,21 @@ app.get(
   "/api/v1/foods",
   cors(),
   async function (request, response) {
-
     const resultGetData = await foodController.foodsGet();
+
+    response.status(resultGetData.status);
+    response.json(resultGetData);
+  }
+);
+
+//Get Food By Type
+app.get(
+  "/api/v1/foods/:type",
+  cors(),
+  async function (request, response) {
+    const foodType = request.params.type;
+
+    const resultGetData = await foodController.foodsTypeGet(foodType);
 
     response.status(resultGetData.status);
     response.json(resultGetData);
@@ -59,6 +72,25 @@ app.get(
 
     response.status(resultGetData.status);
     response.json(resultGetData);
+  }
+);
+
+//Food Update
+app.put(
+  "/api/v1/food-update/:id",
+  cors(),
+  bodyJSON,
+  async function (request, response) {
+    const foodId = request.params.id;
+    const bodyData = request.body;
+
+    const resultUpdateData = await foodController.foodUpdate(
+      foodId,
+      bodyData
+    );
+
+    response.status(resultUpdateData.status);
+    response.json(resultUpdateData);
   }
 );
 
