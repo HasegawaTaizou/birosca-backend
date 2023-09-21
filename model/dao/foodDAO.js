@@ -86,6 +86,28 @@ const getFoodById = async function (foodId) {
   }
 };
 
+const deleteFoodById = async function (foodId) {
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.foodIngredient.deleteMany({
+        where: {
+          idFood: Number(foodId),
+        },
+      });
+
+      await tx.food.delete({
+        where: {
+          id: Number(foodId),
+        },
+      });
+    });
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 // const updateFood = async function (foodId, foodData) {
 //   try {
 //     const oldFoodData = await prisma.food.findUnique({
@@ -300,5 +322,6 @@ module.exports = {
   getFoods,
   getFoodsByType,
   getFoodById,
+  deleteFoodById,
   updateFood,
 };

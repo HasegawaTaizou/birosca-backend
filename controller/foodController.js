@@ -121,6 +121,19 @@ const foodGet = async function (foodId) {
   }
 };
 
+const foodDelete = async function (foodId) {
+  if (false) {
+    return message.ERROR_REQUIRED_DATA;
+  } else {
+    let status = await foodDAO.deleteFoodById(foodId);
+    if (status) {
+      return message.CREATED_ITEM;
+    } else {
+      return message.ERROR_INTERNAL_SERVER;
+    }
+  }
+};
+
 const foodUpdate = async function (foodId, foodData) {
   if (false) {
     return message.ERROR_REQUIRED_DATA;
@@ -139,5 +152,6 @@ module.exports = {
   foodsGet,
   foodsTypeGet,
   foodGet,
+  foodDelete,
   foodUpdate,
 };

@@ -36,44 +36,42 @@ app.post(
 );
 
 //Get Foods
-app.get(
-  "/api/v1/foods",
-  cors(),
-  async function (request, response) {
-    const resultGetData = await foodController.foodsGet();
+app.get("/api/v1/foods", cors(), async function (request, response) {
+  const resultGetData = await foodController.foodsGet();
 
-    response.status(resultGetData.status);
-    response.json(resultGetData);
-  }
-);
+  response.status(resultGetData.status);
+  response.json(resultGetData);
+});
 
 //Get Food By Type
-app.get(
-  "/api/v1/foods/:type",
-  cors(),
-  async function (request, response) {
-    const foodType = request.params.type;
+app.get("/api/v1/foods/:type", cors(), async function (request, response) {
+  const foodType = request.params.type;
 
-    const resultGetData = await foodController.foodsTypeGet(foodType);
+  const resultGetData = await foodController.foodsTypeGet(foodType);
 
-    response.status(resultGetData.status);
-    response.json(resultGetData);
-  }
-);
+  response.status(resultGetData.status);
+  response.json(resultGetData);
+});
 
 //Get Food
-app.get(
-  "/api/v1/foods/:id",
-  cors(),
-  async function (request, response) {
-    const foodId = request.params.id;
+app.get("/api/v1/foods-id/:id", cors(), async function (request, response) {
+  const foodId = request.params.id;
 
-    const resultGetData = await foodController.foodGet(foodId);
+  const resultGetData = await foodController.foodGet(foodId);
 
-    response.status(resultGetData.status);
-    response.json(resultGetData);
-  }
-);
+  response.status(resultGetData.status);
+  response.json(resultGetData);
+});
+
+//Food Delete
+app.delete("/api/v1/food-delete/:id", cors(), async function (request, response) {
+  const foodId = request.params.id;
+  console.log("entrou");
+  const resultDeleteData = await foodController.foodDelete(foodId);
+
+  response.status(resultDeleteData.status);
+  response.json(resultDeleteData);
+});
 
 //Food Update
 app.put(
@@ -84,16 +82,12 @@ app.put(
     const foodId = request.params.id;
     const bodyData = request.body;
 
-    const resultUpdateData = await foodController.foodUpdate(
-      foodId,
-      bodyData
-    );
+    const resultUpdateData = await foodController.foodUpdate(foodId, bodyData);
 
     response.status(resultUpdateData.status);
     response.json(resultUpdateData);
   }
 );
-
 
 /*
 //Hospital Registration
