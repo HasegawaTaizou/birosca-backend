@@ -35,6 +35,19 @@ app.post(
   }
 );
 
+//Get Foods
+app.get(
+  "/api/v1/foods",
+  cors(),
+  async function (request, response) {
+
+    const resultGetData = await foodController.foodsGet();
+
+    response.status(resultGetData.status);
+    response.json(resultGetData);
+  }
+);
+
 //Get Food
 app.get(
   "/api/v1/foods/:id",
@@ -48,6 +61,7 @@ app.get(
     response.json(resultGetData);
   }
 );
+
 
 /*
 //Hospital Registration

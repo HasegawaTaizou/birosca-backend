@@ -15,6 +15,48 @@ const foodInsert = async function (foodData) {
   }
 };
 
+const foodsGet = async function () {
+  if (false) {
+    return message.ERROR_REQUIRED_DATA;
+  } else {
+    const foodData = await foodDAO.getFoods();
+
+    let jsonFoodData = {};
+
+    if (foodData && foodData.length > 0) {
+      // Crie um objeto para mapear os alimentos por id
+      let foodMap = {};
+
+      foodData.forEach((item) => {
+        if (!foodMap[item.id]) {
+          // Se o id não existe no mapa, crie um novo objeto com a estrutura desejada
+          foodMap[item.id] = {
+            id: item.id,
+            title: "title",
+            price: "29.9",
+            image: "image",
+            type: "ACAI",
+            ingredients: [],
+          };
+        }
+
+        // Adicione o ingrediente atual à lista de ingredientes
+        foodMap[item.id].ingredients.push(item.ingredient);
+      });
+
+      // Converta o mapa de alimentos em uma lista
+      let foodList = Object.values(foodMap);
+
+      jsonFoodData.status = 200;
+      jsonFoodData.foods = foodList;
+
+      return jsonFoodData;
+    } else {
+      return message.ERROR_INTERNAL_SERVER;
+    }
+  }
+};
+
 const foodGet = async function (foodId) {
   if (false) {
     return message.ERROR_REQUIRED_DATA;
@@ -29,39 +71,11 @@ const foodGet = async function (foodId) {
       jsonFoodData.status = 200;
       jsonFoodData.food = [
         {
-          title: "title",
-          price: "29.9",
-          image: "image",
-          type: "ACAI",
-          ingredients: ingredients,
-        },
-      ];
-
-      return jsonFoodData;
-    } else {
-      return message.ERROR_INTERNAL_SERVER;
-    }
-  }
-};
-
-const foodsGet = async function (foodData) {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
-  } else {
-    const foodData = await foodDAO.getFoodById(foodId);
-
-    const jsonFoodData = {};
-
-    if (foodData) {
-      const ingredients = foodData.map((food) => food.ingredient);
-
-      jsonFoodData.status = 200;
-      jsonFoodData.food = [
-        {
-          title: "title",
-          price: "29.9",
-          image: "image",
-          type: "ACAI",
+          id: foodData[0].id,
+          title: foodData[0].title,
+          price: foodData[0].price,
+          image: foodData[0].image,
+          type: foodData[0].type,
           ingredients: ingredients,
         },
       ];
@@ -141,5 +155,6 @@ const hospitalUpdate = async function (hospitalId, hospitalData) {
 
 module.exports = {
   foodInsert,
+  foodsGet,
   foodGet,
 };

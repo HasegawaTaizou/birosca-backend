@@ -36,9 +36,25 @@ const insertFood = async function (foodData) {
   }
 };
 
+const getFoods = async function () {
+  const sql = `
+  SELECT tbl_food.id, tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
+  INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
+  INNER JOIN tbl_food_type ON tbl_food_type.id = tbl_food.id_food_type;
+  `;
+
+  const responseFood = await prisma.$queryRawUnsafe(sql);
+
+  if (responseFood) {
+    return responseFood;
+  } else {
+    return false;
+  }
+};
+
 const getFoodById = async function (foodId) {
   const sql = `
-  SELECT tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
+  SELECT tbl_food.id, tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
   INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
   INNER JOIN tbl_food_type ON tbl_food_type.id = tbl_food.id_food_type
   WHERE tbl_food.id = ${foodId};
@@ -264,5 +280,6 @@ async function updateHospital(hospitalId, hospitalData) {
 
 module.exports = {
   insertFood,
+  getFoods,
   getFoodById,
 };
