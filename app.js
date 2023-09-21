@@ -35,6 +35,20 @@ app.post(
   }
 );
 
+//Get Food
+app.get(
+  "/api/v1/foods/:id",
+  cors(),
+  async function (request, response) {
+    const foodId = request.params.id;
+
+    const resultGetData = await foodController.foodGet(foodId);
+
+    response.status(resultGetData.status);
+    response.json(resultGetData);
+  }
+);
+
 /*
 //Hospital Registration
 app.post(

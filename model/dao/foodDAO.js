@@ -6,8 +6,10 @@ const foodIngredientDAO = require("./foodIngredientDAO.js");
 
 const insertFood = async function (foodData) {
   try {
-    const foodTypeName = await foodTypeDAO.getFoodTypeIdByName(foodData.foodType)
-    const idFoodType = foodTypeName[0].id
+    const foodTypeName = await foodTypeDAO.getFoodTypeIdByName(
+      foodData.foodType
+    );
+    const idFoodType = foodTypeName[0].id;
 
     //Food Insert
     const insertFoodData = await prisma.food.create({
@@ -15,20 +17,39 @@ const insertFood = async function (foodData) {
         image: foodData.image,
         title: foodData.title,
         price: foodData.price,
-        idFoodType: idFoodType
+        idFoodType: idFoodType,
       },
     });
-
-    //Food Ingredient Insert
     const foodId = insertFoodData.id;
 
-    const foodIngredientInsert = await foodIngredientDAO.insertFoodIngredient(foodId, foodData.ingredients)
+    //Food Ingredient Insert
+    const foodIngredientInsert = await foodIngredientDAO.insertFoodIngredient(
+      foodId,
+      foodData.ingredients
+    );
 
     return true;
   } catch (error) {
     console.error("Erro ao criar a comida:", error);
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+const getFoodById = async function (foodId) {
+  const sql = `
+  SELECT tbl_food.title, tbl_food.price, tbl_food.image, tbl_food_type.type, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
+  INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
+  INNER JOIN tbl_food_type ON tbl_food_type.id = tbl_food.id_food_type
+  WHERE tbl_food.id = ${foodId};
+  `;
+
+  const responseFood = await prisma.$queryRawUnsafe(sql);
+
+  if (responseFood) {
+    return responseFood;
+  } else {
+    return false;
   }
 };
 
@@ -243,4 +264,5 @@ async function updateHospital(hospitalId, hospitalData) {
 
 module.exports = {
   insertFood,
+  getFoodById,
 };

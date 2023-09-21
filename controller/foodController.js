@@ -15,6 +15,64 @@ const foodInsert = async function (foodData) {
   }
 };
 
+const foodGet = async function (foodId) {
+  if (false) {
+    return message.ERROR_REQUIRED_DATA;
+  } else {
+    const foodData = await foodDAO.getFoodById(foodId);
+
+    const jsonFoodData = {};
+
+    if (foodData) {
+      const ingredients = foodData.map((food) => food.ingredient);
+
+      jsonFoodData.status = 200;
+      jsonFoodData.food = [
+        {
+          title: "title",
+          price: "29.9",
+          image: "image",
+          type: "ACAI",
+          ingredients: ingredients,
+        },
+      ];
+
+      return jsonFoodData;
+    } else {
+      return message.ERROR_INTERNAL_SERVER;
+    }
+  }
+};
+
+const foodsGet = async function (foodData) {
+  if (false) {
+    return message.ERROR_REQUIRED_DATA;
+  } else {
+    const foodData = await foodDAO.getFoodById(foodId);
+
+    const jsonFoodData = {};
+
+    if (foodData) {
+      const ingredients = foodData.map((food) => food.ingredient);
+
+      jsonFoodData.status = 200;
+      jsonFoodData.food = [
+        {
+          title: "title",
+          price: "29.9",
+          image: "image",
+          type: "ACAI",
+          ingredients: ingredients,
+        },
+      ];
+
+      return jsonFoodData;
+    } else {
+      return message.ERROR_INTERNAL_SERVER;
+    }
+  }
+};
+
 /*
 const hospitalInsert = async function (hospitalData) {
   if (false) {
@@ -83,4 +141,5 @@ const hospitalUpdate = async function (hospitalId, hospitalData) {
 
 module.exports = {
   foodInsert,
+  foodGet,
 };
