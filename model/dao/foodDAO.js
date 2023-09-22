@@ -108,214 +108,52 @@ const deleteFoodById = async function (foodId) {
   }
 };
 
-// const updateFood = async function (foodId, foodData) {
-//   try {
-//     const oldFoodData = await prisma.food.findUnique({
-//       where: {
-//         id: Number(foodId),
-//       },
-//       include: {
-//         FoodIngredient: {
-//           select: {
-//             idFood: true,
-//             ingredient: true,
-//           },
-//         },
-//       },
-//     });
-
-//     console.log("ANTIGOOOOOOOOOOOOOO");
-//     console.log(oldFoodData);
-
-//     const updatedFood = await prisma.food.update({
-//       where: {
-//         id: Number(foodId),
-//       },
-//       data: {
-//         // UPDATE FOOD
-//         title: foodData.title,
-//         price: foodData.price,
-//         image: foodData.image,
-//         // UPDATE FOOD INGREDIENTS
-//         FoodIngredient: {
-//           update: {
-//             where: {
-//               id: Number(foodId),
-//             },
-//             data: {
-//               ingredient: foodData.ingredients[0],
-//             },
-//           },
-//         },
-//       },
-//     });
-
-//     console.log("NOVOOOOOOOOOOOOOOO");
-//     console.log(updatedFood);
-
-//     return true;
-//   } catch (error) {
-//     console.error("Erro ao atualizar o food:", error);
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// };
-
 const updateFood = async function (foodId, foodData) {
-  try {
-    // Crie um array de promessas para as operações de criação de ingredientes
-    const createIngredientPromises = foodData.ingredients.map(
-      async (ingredientName) => {
-        return prisma.foodIngredient.create({
-          data: {
-            ingredient: ingredientName,
-            idFood: Number(foodId),
-            // Food: {
-            //   connect: {
-            //     id: Number(foodId)
-            //   }
-            // }
-          },
-        });
-      }
+  const sqlFoodIngredients = `
+  SELECT tbl_food_ingredient.id, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
+  INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
+  WHERE tbl_food_ingredient.id_food = ${foodId};
+  `;
+
+  const responseFoodIngredients = await prisma.$queryRawUnsafe(
+    sqlFoodIngredients
+  );
+
+  //Update Food
+  const sqlUpdateFood = `
+    UPDATE tbl_food
+  SET
+      image = '${foodData.image}',
+      title = '${foodData.title}',
+      price = ${foodData.price}
+  WHERE
+      id = ${foodId};
+  `;
+
+  const responseFoodUpdate = await prisma.$executeRawUnsafe(sqlUpdateFood);
+
+  //Update Ingredients
+  responseFoodIngredients.forEach((ingredient, index) => {
+    foodIngredientDAO.updateFoodIngredient(
+      foodId,
+      ingredient.id,
+      foodData.ingredients[index]
     );
+  });
 
-    // Aguarde a resolução de todas as promessas de criação de ingredientes
-    await Promise.all(createIngredientPromises);
+  const newIngredients = foodData.ingredients.slice(
+    responseFoodIngredients.length
+  );
 
-    // Exclua todos os ingredientes associados a este alimento
-    await prisma.foodIngredient.deleteMany({
-      where: {
-        idFood: Number(foodId),
-      },
-    });
+  //Insert Ingredients
+  foodIngredientDAO.insertFoodIngredient(foodId, newIngredients);
 
-    // Atualize os dados do alimento
-    await prisma.food.update({
-      where: {
-        id: Number(foodId),
-      },
-      data: {
-        title: foodData.title,
-        price: foodData.price,
-        image: foodData.image,
-      },
-    });
-
-    console.log("Atualização concluída com sucesso.");
-    return true;
-  } catch (error) {
-    console.error("Erro ao atualizar o alimento:", error);
-  } finally {
-    await prisma.$disconnect();
+  if (responseFoodUpdate) {
+    return responseFoodUpdate;
+  } else {
+    return false;
   }
 };
-
-/*
-
-
-async function updateHospital(hospitalId, hospitalData) {
-  try {
-    const oldHospitalData = await prisma.hospital.findUnique({
-      where: {
-        id: Number(hospitalId),
-      },
-      include: {
-        Phone: {
-          select: {
-            phone: true,
-          },
-        },
-        Photo: {
-          select: {
-            url: true,
-          },
-        },
-        HospitalSite: {
-          select: {
-            Site: {
-              select: {
-                site: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    console.log(hospitalData.hospital);
-
-    const updatedHospital = await prisma.hospital.update({
-      where: {
-        id: Number(hospitalId),
-      },
-      data: {
-        // UPDATE HOSPITAL
-        name: hospitalData.hospital.name,
-        cnpj: hospitalData.hospital.cnpj,
-        email: hospitalData.hospital.email,
-        websiteUrl: hospitalData.hospital.website,
-        // UPDATE PHONE
-        Phone: {
-          update: {
-            where: {
-              id: Number(hospitalId),
-            },
-            data: {
-              phone: hospitalData.hospital.phone,
-            },
-          },
-        },
-        // UPDATE PHOTO
-        Photo: {
-          update: {
-            where: {
-              id: Number(hospitalId),
-            },
-            data: {
-              url: hospitalData.hospital.photo,
-            },
-          },
-        },
-        // UPDATE SITE
-        HospitalSite: {
-          update: {
-            where: {
-              id: Number(hospitalId),
-            },
-            data: {
-              Site: {
-                update: {
-                  site: hospitalData.hospital.donationSite,
-                  // site: hospitalData.hospital.otherDonationSite,
-                },
-              },
-            },
-          },
-        },
-        // UPDATE ADDRESS
-        Address: {
-          update: {
-            cep: hospitalData.address.cep,
-            uf: hospitalData.address.uf,
-            city: hospitalData.address.city,
-            neighborhood: hospitalData.address.neighborhood,
-            street: hospitalData.address.street,
-            number: hospitalData.address.number,
-            complement: hospitalData.address.complement,
-          },
-        },
-      },
-    });
-
-    return true;
-  } catch (error) {
-    console.error("Erro ao atualizar o hospital:", error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-*/
 
 module.exports = {
   insertFood,

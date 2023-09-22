@@ -66,7 +66,6 @@ app.get("/api/v1/foods-id/:id", cors(), async function (request, response) {
 //Food Delete
 app.delete("/api/v1/food-delete/:id", cors(), async function (request, response) {
   const foodId = request.params.id;
-  console.log("entrou");
   const resultDeleteData = await foodController.foodDelete(foodId);
 
   response.status(resultDeleteData.status);
@@ -88,56 +87,6 @@ app.put(
     response.json(resultUpdateData);
   }
 );
-
-/*
-//Hospital Registration
-app.post(
-  "/api/v1/hospital-registration",
-  cors(),
-  bodyJSON,
-  async function (request, response) {
-    let bodyData = request.body;
-
-    let resultInsertData = await hospitalController.hospitalInsert(bodyData);
-
-    response.status(resultInsertData.status);
-    response.json(resultInsertData);
-  }
-);
-
-//Get Hospital
-app.get(
-  "/api/v1/hospital-data/:id",
-  cors(),
-  async function (request, response) {
-    let hospitalId = request.params.id;
-
-    let resultGetData = await hospitalController.hospitalGet(hospitalId);
-
-    response.status(resultGetData.status);
-    response.json(resultGetData);
-  }
-);
-
-//Hospital Password Update
-app.put(
-  "/api/v1/hospital/redefine-password/:id",
-  cors(),
-  bodyJSON,
-  async function (request, response) {
-    let hospitalId = request.params.id;
-    let bodyData = request.body;
-
-    let resultUpdateData = await hospitalController.hospitalPasswordUpdate(
-      hospitalId,
-      bodyData
-    );
-
-    response.status(resultUpdateData.status);
-    response.json(resultUpdateData);
-  }
-);
-*/
 
 app.listen(8080, function () {
   console.log("Server waiting for requests on port 8080!");
