@@ -109,14 +109,9 @@ const deleteFoodById = async function (foodId) {
 };
 
 const updateFood = async function (foodId, foodData) {
-  const sqlFoodIngredients = `
-  SELECT tbl_food_ingredient.id, tbl_food_ingredient.ingredient FROM tbl_food_ingredient
-  INNER JOIN tbl_food ON tbl_food.id = tbl_food_ingredient.id_food
-  WHERE tbl_food_ingredient.id_food = ${foodId};
-  `;
-
-  const responseFoodIngredients = await prisma.$queryRawUnsafe(
-    sqlFoodIngredients
+  //Get Food Ingredients
+  const responseFoodIngredients = await foodIngredientDAO.getFoodIngredient(
+    foodId
   );
 
   //Update Food
@@ -132,9 +127,20 @@ const updateFood = async function (foodId, foodData) {
 
   const responseFoodUpdate = await prisma.$executeRawUnsafe(sqlUpdateFood);
 
+  console.log(
+    "responseFoodIngredients.length: ",
+    responseFoodIngredients.length
+  );
+  console.log("foodData.ingredients.length: ", foodData.ingredients.length);
+
+  //Delete Ingredients
+  if (responseFoodIngredients.length > foodData.ingredients.length) {
+    //DELETE AAA
+  }
+
   //Update Ingredients
-  responseFoodIngredients.forEach((ingredient, index) => {
-    foodIngredientDAO.updateFoodIngredient(
+  responseFoodIngredients.forEach(async function (ingredient, index) {
+    await foodIngredientDAO.updateFoodIngredient(
       foodId,
       ingredient.id,
       foodData.ingredients[index]
@@ -146,7 +152,7 @@ const updateFood = async function (foodId, foodData) {
   );
 
   //Insert Ingredients
-  foodIngredientDAO.insertFoodIngredient(foodId, newIngredients);
+  await foodIngredientDAO.insertFoodIngredient(foodId, newIngredients);
 
   if (responseFoodUpdate) {
     return responseFoodUpdate;
