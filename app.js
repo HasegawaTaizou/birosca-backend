@@ -17,6 +17,7 @@ app.use((request, response, next) => {
 const bodyJSON = bodyParser.json();
 
 const foodController = require("./controller/foodController.js");
+const adminController = require("./controller/adminController.js");
 
 //ENDPOINTS:
 
@@ -64,13 +65,17 @@ app.get("/api/v1/foods-id/:id", cors(), async function (request, response) {
 });
 
 //Food Delete
-app.delete("/api/v1/food-delete/:id", cors(), async function (request, response) {
-  const foodId = request.params.id;
-  const resultDeleteData = await foodController.foodDelete(foodId);
+app.delete(
+  "/api/v1/food-delete/:id",
+  cors(),
+  async function (request, response) {
+    const foodId = request.params.id;
+    const resultDeleteData = await foodController.foodDelete(foodId);
 
-  response.status(resultDeleteData.status);
-  response.json(resultDeleteData);
-});
+    response.status(resultDeleteData.status);
+    response.json(resultDeleteData);
+  }
+);
 
 //Food Update
 app.put(
@@ -87,6 +92,41 @@ app.put(
     response.json(resultUpdateData);
   }
 );
+
+//Admin Login
+app.post("/api/v1/login", cors(), bodyJSON, async function (request, response) {
+  const bodyData = request.body;
+
+  const resultLogin = await adminController.loginAdmin(bodyData);
+
+  response.status(resultLogin.status.status);
+  response.json(resultLogin);
+});
+
+//Admin Insert
+app.post(
+  "/api/v1/admin-registration",
+  cors(),
+  bodyJSON,
+  async function (request, response) {
+    const bodyData = request.body;
+
+    const resultInsert = await adminController.adminInsert(bodyData);
+
+    response.status(resultInsert.status);
+    response.json(resultInsert);
+  }
+);
+
+//Admin Get
+app.post("/api/v1/admin", cors(), bodyJSON, async function (request, response) {
+  const bodyData = request.body;
+
+  const resultAdmin = await adminController.adminGet(bodyData);
+
+  response.status(resultAdmin.status);
+  response.json(resultAdmin);
+});
 
 app.listen(8080, function () {
   console.log("Server waiting for requests on port 8080!");

@@ -45,3 +45,11 @@ model FoodIngredient {
 
   @@map("tbl_food_ingredient")
 }
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @db.VarChar(256)
+  password String @db.VarChar(250)
+
+  @@map("tbl_admin")
+}
