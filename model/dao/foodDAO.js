@@ -127,15 +127,29 @@ const updateFood = async function (foodId, foodData) {
 
   const responseFoodUpdate = await prisma.$executeRawUnsafe(sqlUpdateFood);
 
-  console.log(
-    "responseFoodIngredients.length: ",
-    responseFoodIngredients.length
+  const indexIngredients = Math.min(
+    responseFoodIngredients.length,
+    foodData.ingredients.length
   );
-  console.log("foodData.ingredients.length: ", foodData.ingredients.length);
 
-  //Delete Ingredients
+  // Delete Ingredients
   if (responseFoodIngredients.length > foodData.ingredients.length) {
-    //DELETE AAA
+    const newIngredients = foodData.ingredients.slice(0, indexIngredients);
+    const ingredientsToRemove = responseFoodIngredients.slice(newIngredients.length);
+
+    //Delete
+    ingredientsToRemove.forEach(async function (ingredient) {
+      await foodIngredientDAO.deleteFoodIngredient(foodId, ingredient.id);
+    });
+
+    //Update
+    responseFoodIngredients.forEach(async function (ingredient, index) {
+      await foodIngredientDAO.updateFoodIngredient(
+        foodId,
+        ingredient.id,
+        newIngredients[index]
+      );
+    });
   }
 
   //Update Ingredients
