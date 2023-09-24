@@ -9,13 +9,13 @@ const loginAdmin = async function (loginData) {
 
   const adminData = await adminDAO.adminLogin(loginData);
 
-  const token = jwt.sign(
-    { userId: adminData.id, email: adminData.email },
-    JWT_SECRET
-  );
-
   if (adminData) {
-    jsonAdminData.status = message.LOGIN_CORRECT;
+    const token = jwt.sign(
+      { userId: adminData.id, email: adminData.email },
+      JWT_SECRET
+    );
+
+    jsonAdminData.status = message.LOGIN_CORRECT.status;
     jsonAdminData.userData = {
       userId: adminData.id,
       email: adminData.email,

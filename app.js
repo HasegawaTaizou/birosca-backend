@@ -99,7 +99,7 @@ app.post("/api/v1/login", cors(), bodyJSON, async function (request, response) {
 
   const resultLogin = await adminController.loginAdmin(bodyData);
 
-  response.status(resultLogin.status.status);
+  response.status(resultLogin.status);
   response.json(resultLogin);
 });
 
