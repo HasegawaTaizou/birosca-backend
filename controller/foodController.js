@@ -35,7 +35,7 @@ const foodsGet = async function () {
   const foodData = await foodDAO.getFoods();
 
   if (foodData.length == 0) {
-    return message.NOT_FOUND;
+    return message.ERROR_RESOURCE_NOT_FOUND;
   } else if (foodData) {
     const jsonFoodData = {};
 
@@ -58,7 +58,7 @@ const foodsGet = async function () {
 
     const foodList = Object.values(foodMap);
 
-    jsonFoodData.status = 200;
+    jsonFoodData.status = message.OK.status;
     jsonFoodData.foods = foodList;
 
     return jsonFoodData;
@@ -71,7 +71,7 @@ const foodsTypeGet = async function (foodType) {
   const foodData = await foodDAO.getFoodsByType(foodType);
 
   if (foodData.length == 0) {
-    return message.NOT_FOUND;
+    return message.ERROR_RESOURCE_NOT_FOUND;
   } else if (!validateFoodType(foodType)) {
     return message.ERROR_REQUIRED_DATA;
   } else if (foodData) {
@@ -96,7 +96,7 @@ const foodsTypeGet = async function (foodType) {
 
     const foodList = Object.values(foodMap);
 
-    jsonFoodData.status = 200;
+    jsonFoodData.status = message.OK.status;
     jsonFoodData.foods = foodList;
 
     return jsonFoodData;
@@ -112,13 +112,13 @@ const foodGet = async function (foodId) {
     const foodData = await foodDAO.getFoodById(foodId);
 
     if (foodData.length == 0) {
-      return message.NOT_FOUND;
+      return message.ERROR_RESOURCE_NOT_FOUND;
     } else if (foodData) {
       const jsonFoodData = {};
 
       const ingredients = foodData.map((food) => food.ingredient);
 
-      jsonFoodData.status = 200;
+      jsonFoodData.status = message.OK.status;
       jsonFoodData.food = [
         {
           id: foodData[0].id,
@@ -137,20 +137,26 @@ const foodGet = async function (foodId) {
   }
 };
 
-//aqui parei
 const foodDelete = async function (foodId) {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
+  if (!validateId(foodId)) {
+    return message.ERROR_INVALID_ID;
   } else {
+    const foodData = await foodDAO.getFoodById(foodId);
+
+    if (foodData.length == 0) {
+      return message.ERROR_RESOURCE_NOT_FOUND;
+    }
+
     let status = await foodDAO.deleteFoodById(foodId);
     if (status) {
-      return message.CREATED_ITEM;
+      return message.NO_CONTENT;
     } else {
       return message.ERROR_INTERNAL_SERVER;
     }
   }
 };
 
+//parei aqui
 const foodUpdate = async function (foodId, foodData) {
   if (false) {
     return message.ERROR_REQUIRED_DATA;
