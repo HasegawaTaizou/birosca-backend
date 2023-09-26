@@ -3,6 +3,11 @@ const ERROR_REQUIRED_DATA = {
   status: 400,
   message: "Existem dados obrigatórios que não foram preenchidos.",
 };
+const ERROR_INVALID_ID = {
+  status: 400,
+  message:
+    "O ID especificado é inválido. Certifique-se de que seja um valor numérico.",
+};
 const NOT_FOUND = {
   status: 404,
   message: "Nenhum item encontrado.",
@@ -24,6 +29,7 @@ const LOGIN_CORRECT = { status: 200, message: "Login Succesfull." };
 
 module.exports = {
   ERROR_REQUIRED_DATA,
+  ERROR_INVALID_ID,
   NOT_FOUND,
   ERROR_INTERNAL_SERVER,
   CREATED_ITEM,

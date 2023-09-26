@@ -10,6 +10,7 @@ const {
 } = require("../validations/validate-ingredients.js");
 const { validatePrice } = require("../validations/validate-price.js");
 const { validateTitle } = require("../validations/validate-title.js");
+const { validateId } = require("../validations/validate-id.js");
 
 const foodInsert = async function (foodData) {
   if (
@@ -21,7 +22,7 @@ const foodInsert = async function (foodData) {
   ) {
     return message.ERROR_REQUIRED_DATA;
   } else {
-    let status = await foodDAO.insertFood(foodData);
+    const status = await foodDAO.insertFood(foodData);
     if (status) {
       return message.CREATED_ITEM;
     } else {
@@ -36,9 +37,9 @@ const foodsGet = async function () {
   if (foodData.length == 0) {
     return message.NOT_FOUND;
   } else if (foodData) {
-    let jsonFoodData = {};
+    const jsonFoodData = {};
 
-    let foodMap = {};
+    const foodMap = {};
 
     foodData.forEach((food) => {
       if (!foodMap[food.id]) {
@@ -55,7 +56,7 @@ const foodsGet = async function () {
       foodMap[food.id].ingredients.push(food.ingredient);
     });
 
-    let foodList = Object.values(foodMap);
+    const foodList = Object.values(foodMap);
 
     jsonFoodData.status = 200;
     jsonFoodData.foods = foodList;
@@ -74,9 +75,9 @@ const foodsTypeGet = async function (foodType) {
   } else if (!validateFoodType(foodType)) {
     return message.ERROR_REQUIRED_DATA;
   } else if (foodData) {
-    let jsonFoodData = {};
+    const jsonFoodData = {};
 
-    let foodMap = {};
+    const foodMap = {};
 
     foodData.forEach((item) => {
       if (!foodMap[item.id]) {
@@ -93,7 +94,7 @@ const foodsTypeGet = async function (foodType) {
       foodMap[item.id].ingredients.push(item.ingredient);
     });
 
-    let foodList = Object.values(foodMap);
+    const foodList = Object.values(foodMap);
 
     jsonFoodData.status = 200;
     jsonFoodData.foods = foodList;
@@ -104,16 +105,17 @@ const foodsTypeGet = async function (foodType) {
   }
 };
 
-//aqui parei
 const foodGet = async function (foodId) {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
+  if (!validateId(foodId)) {
+    return message.ERROR_INVALID_ID;
   } else {
     const foodData = await foodDAO.getFoodById(foodId);
 
-    const jsonFoodData = {};
+    if (foodData.length == 0) {
+      return message.NOT_FOUND;
+    } else if (foodData) {
+      const jsonFoodData = {};
 
-    if (foodData) {
       const ingredients = foodData.map((food) => food.ingredient);
 
       jsonFoodData.status = 200;
@@ -135,6 +137,7 @@ const foodGet = async function (foodId) {
   }
 };
 
+//aqui parei
 const foodDelete = async function (foodId) {
   if (false) {
     return message.ERROR_REQUIRED_DATA;
