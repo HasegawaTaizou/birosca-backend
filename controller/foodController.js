@@ -3,7 +3,13 @@ const foodDAO = require("../model/dao/foodDAO.js");
 const message = require("./module/config.js");
 
 const foodInsert = async function (foodData) {
-  if (false) {
+  if (
+    foodData.image == null || foodData.image == undefined || typeof(foodData.image) != String || !isNaN(foodData.image) || foodData.image == "" ||
+    foodData.title == null || foodData.title == undefined || typeof(foodData.title) != String || !isNaN(foodData.title) || foodData.title == "" || foodData.title.length > 100 ||
+    foodData.price == null || foodData.price == undefined || typeof(foodData.price) != Number || isNaN(foodData.price) || foodData.price < 0 || 
+    foodData.foodType == null || foodData.foodType == undefined || typeof(foodData.foodType) != String || !isNaN(foodData.foodType)  //validar os tipos de enum
+    //validar o array de ingredients
+  ) {
     return message.ERROR_REQUIRED_DATA;
   } else {
     let status = await foodDAO.insertFood(foodData);
