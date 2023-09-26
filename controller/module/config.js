@@ -21,6 +21,10 @@ const ERROR_INTERNAL_SERVER = {
 const OK = { status: 200, message: "Requisição bem-sucedida" };
 const CREATED_ITEM = { status: 201, message: "Registro criado com sucesso." };
 const NO_CONTENT = { status: 204, message: "Registro excluído com sucesso." };
+const UPDATED_ITEM = {
+  status: 204,
+  message: "Registro atualizado com sucesso",
+};
 
 //*****************************************LOGIN CONSTANTS******************************************************/
 const LOGIN_INCORRECT = {
@@ -37,6 +41,7 @@ module.exports = {
   OK,
   CREATED_ITEM,
   NO_CONTENT,
+  UPDATED_ITEM,
   LOGIN_INCORRECT,
   LOGIN_CORRECT,
 };

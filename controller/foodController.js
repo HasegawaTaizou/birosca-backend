@@ -156,14 +156,19 @@ const foodDelete = async function (foodId) {
   }
 };
 
-//parei aqui
 const foodUpdate = async function (foodId, foodData) {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
+  if (!validateId(foodId)) {
+    return message.ERROR_INVALID_ID;
   } else {
+    const food = await foodDAO.getFoodById(foodId);
+
+    if (food.length == 0) {
+      return message.ERROR_RESOURCE_NOT_FOUND;
+    }
+
     let status = await foodDAO.updateFood(foodId, foodData);
     if (status) {
-      return message.CREATED_ITEM;
+      return message.UPDATED_ITEM;
     } else {
       return message.ERROR_INTERNAL_SERVER;
     }
