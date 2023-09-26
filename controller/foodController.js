@@ -13,11 +13,11 @@ const { validateTitle } = require("../validations/validate-title.js");
 
 const foodInsert = async function (foodData) {
   if (
-    validateTitle(foodData.title) ||
-    validatePrice(foodData.price) ||
-    validateImage(foodData.image) ||
-    validateFoodType(foodData.foodType) ||
-    validateIngredients(foodData.ingredients)
+    !validateTitle(foodData.title) ||
+    !validatePrice(foodData.price) ||
+    !validateImage(foodData.image) ||
+    !validateFoodType(foodData.foodType) ||
+    !validateIngredients(foodData.ingredients)
   ) {
     return message.ERROR_REQUIRED_DATA;
   } else {
@@ -35,11 +35,9 @@ const foodsGet = async function () {
 
   if (foodData.length == 0) {
     return message.NOT_FOUND;
-  }
+  } else if (foodData) {
+    let jsonFoodData = {};
 
-  let jsonFoodData = {};
-
-  if (foodData) {
     let foodMap = {};
 
     foodData.forEach((food) => {
@@ -73,11 +71,11 @@ const foodsTypeGet = async function (foodType) {
 
   if (foodData.length == 0) {
     return message.NOT_FOUND;
-  }
+  } else if (!validateFoodType(foodType)) {
+    return message.ERROR_REQUIRED_DATA;
+  } else if (foodData) {
+    let jsonFoodData = {};
 
-  let jsonFoodData = {};
-
-  if (foodData && foodData.length > 0) {
     let foodMap = {};
 
     foodData.forEach((item) => {
@@ -106,6 +104,7 @@ const foodsTypeGet = async function (foodType) {
   }
 };
 
+//aqui parei
 const foodGet = async function (foodId) {
   if (false) {
     return message.ERROR_REQUIRED_DATA;
