@@ -147,7 +147,7 @@ const foodDelete = async function (foodId) {
       return message.ERROR_RESOURCE_NOT_FOUND;
     }
 
-    let status = await foodDAO.deleteFoodById(foodId);
+    const status = await foodDAO.deleteFoodById(foodId);
     if (status) {
       return message.NO_CONTENT;
     } else {
@@ -166,7 +166,7 @@ const foodUpdate = async function (foodId, foodData) {
       return message.ERROR_RESOURCE_NOT_FOUND;
     }
 
-    let status = await foodDAO.updateFood(foodId, foodData);
+    const status = await foodDAO.updateFood(foodId, foodData);
     if (status) {
       return message.UPDATED_ITEM;
     } else {

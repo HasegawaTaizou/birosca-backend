@@ -3,14 +3,17 @@ const prisma = new PrismaClient();
 
 const adminLogin = async function (loginData) {
   try {
-    //Verify admin
     const admin = await getAdminByEmail(loginData.email);
 
-    // Verify password
-    const passwordMatch = loginData.password === admin.password ? true : false;
+    if (admin) {
+      const emailMatch = loginData.email === admin.email ? true : false;
+      const passwordMatch =
+        loginData.password === admin.password ? true : false;
 
-    if (passwordMatch) {
-      return admin;
+      const loginMatch = emailMatch && passwordMatch;
+      if (loginMatch) {
+        return admin;
+      } 
     }
   } catch (error) {
     return false;
