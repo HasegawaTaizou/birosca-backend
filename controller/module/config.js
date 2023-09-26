@@ -3,6 +3,10 @@ const ERROR_REQUIRED_DATA = {
   status: 400,
   message: "Existem dados obrigatórios que não foram preenchidos.",
 };
+const NOT_FOUND = {
+  status: 404,
+  message: "Nenhum item encontrado.",
+};
 const ERROR_INTERNAL_SERVER = {
   status: 500,
   message: "Erro interno no servidor de banco de dados",
@@ -20,6 +24,7 @@ const LOGIN_CORRECT = { status: 200, message: "Login Succesfull." };
 
 module.exports = {
   ERROR_REQUIRED_DATA,
+  NOT_FOUND,
   ERROR_INTERNAL_SERVER,
   CREATED_ITEM,
   LOGIN_INCORRECT,

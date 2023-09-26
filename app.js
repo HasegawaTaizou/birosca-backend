@@ -31,6 +31,7 @@ app.post(
 
     const resultInsertData = await foodController.foodInsert(bodyData);
 
+    console.log(resultInsertData);
     response.status(resultInsertData.status);
     response.json(resultInsertData);
   }
@@ -40,6 +41,7 @@ app.post(
 app.get("/api/v1/foods", cors(), async function (request, response) {
   const resultGetData = await foodController.foodsGet();
 
+  console.log(resultGetData);
   response.status(resultGetData.status);
   response.json(resultGetData);
 });

@@ -2,10 +2,22 @@ const foodDAO = require("../model/dao/foodDAO.js");
 
 const message = require("./module/config.js");
 
+//VALIDATIONS
+const { validateFoodType } = require("../validations/validate-food-type.js");
+const { validateImage } = require("../validations/validate-image.js");
+const {
+  validateIngredients,
+} = require("../validations/validate-ingredients.js");
+const { validatePrice } = require("../validations/validate-price.js");
+const { validateTitle } = require("../validations/validate-title.js");
+
 const foodInsert = async function (foodData) {
   if (
-    foodData.title == null || foodData.title == undefined || !isNaN(foodData.title) || foodData.title == "" || foodData.title.length > 100
-    //validar o array de ingredients
+    validateTitle(foodData.title) ||
+    validatePrice(foodData.price) ||
+    validateImage(foodData.image) ||
+    validateFoodType(foodData.foodType) ||
+    validateIngredients(foodData.ingredients)
   ) {
     return message.ERROR_REQUIRED_DATA;
   } else {
@@ -19,78 +31,78 @@ const foodInsert = async function (foodData) {
 };
 
 const foodsGet = async function () {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
+  const foodData = await foodDAO.getFoods();
+
+  if (foodData.length == 0) {
+    return message.NOT_FOUND;
+  }
+
+  let jsonFoodData = {};
+
+  if (foodData) {
+    let foodMap = {};
+
+    foodData.forEach((food) => {
+      if (!foodMap[food.id]) {
+        foodMap[food.id] = {
+          id: food.id,
+          title: food.title,
+          price: food.price,
+          image: food.image,
+          type: food.type,
+          ingredients: [],
+        };
+      }
+
+      foodMap[food.id].ingredients.push(food.ingredient);
+    });
+
+    let foodList = Object.values(foodMap);
+
+    jsonFoodData.status = 200;
+    jsonFoodData.foods = foodList;
+
+    return jsonFoodData;
   } else {
-    const foodData = await foodDAO.getFoods();
-
-    let jsonFoodData = {};
-
-    if (foodData && foodData.length > 0) {
-      let foodMap = {};
-
-      foodData.forEach((item) => {
-        if (!foodMap[item.id]) {
-          foodMap[item.id] = {
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            image: item.image,
-            type: item.type,
-            ingredients: [],
-          };
-        }
-
-        foodMap[item.id].ingredients.push(item.ingredient);
-      });
-
-      let foodList = Object.values(foodMap);
-
-      jsonFoodData.status = 200;
-      jsonFoodData.foods = foodList;
-
-      return jsonFoodData;
-    } else {
-      return message.ERROR_INTERNAL_SERVER;
-    }
+    return message.ERROR_INTERNAL_SERVER;
   }
 };
 
 const foodsTypeGet = async function (foodType) {
-  if (false) {
-    return message.ERROR_REQUIRED_DATA;
+  const foodData = await foodDAO.getFoodsByType(foodType);
+
+  if (foodData.length == 0) {
+    return message.NOT_FOUND;
+  }
+
+  let jsonFoodData = {};
+
+  if (foodData && foodData.length > 0) {
+    let foodMap = {};
+
+    foodData.forEach((item) => {
+      if (!foodMap[item.id]) {
+        foodMap[item.id] = {
+          id: item.id,
+          title: item.title,
+          price: item.price,
+          image: item.image,
+          type: item.type,
+          ingredients: [],
+        };
+      }
+
+      foodMap[item.id].ingredients.push(item.ingredient);
+    });
+
+    let foodList = Object.values(foodMap);
+
+    jsonFoodData.status = 200;
+    jsonFoodData.foods = foodList;
+
+    return jsonFoodData;
   } else {
-    const foodData = await foodDAO.getFoodsByType(foodType);
-
-    let jsonFoodData = {};
-
-    if (foodData && foodData.length > 0) {
-      let foodMap = {};
-
-      foodData.forEach((item) => {
-        if (!foodMap[item.id]) {
-          foodMap[item.id] = {
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            image: item.image,
-            type: item.type,
-            ingredients: [],
-          };
-        }
-
-        foodMap[item.id].ingredients.push(item.ingredient);
-      });
-
-      let foodList = Object.values(foodMap);
-
-      jsonFoodData.status = 200;
-      jsonFoodData.foods = foodList;
-
-      return jsonFoodData;
-    } else {
-      return message.ERROR_INTERNAL_SERVER;
-    }
+    return message.ERROR_INTERNAL_SERVER;
   }
 };
 
