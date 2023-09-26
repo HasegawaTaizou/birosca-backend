@@ -1,5 +1,3 @@
-let title = "ewfw45345dw"
-
 const validateTitle = function (title) {
   let status = true;
 
@@ -15,4 +13,6 @@ const validateTitle = function (title) {
   return status;
 };
 
-console.log(validateTitle(title))
+module.exports = {
+  validateTitle
+}

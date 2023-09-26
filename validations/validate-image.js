@@ -1,6 +1,3 @@
-
-let imagem = "ewfw45345dw"
-
 const validateImage = function (image) {
   let status = true;
 
@@ -15,4 +12,6 @@ const validateImage = function (image) {
   return status;
 };
 
-console.log(validateImage(imagem))
+module.exports = {
+  validateImage
+}

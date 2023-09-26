@@ -1,6 +1,3 @@
-
-let preco = "dawd"
-
 const validatePrice = function (price) {
   let status = true;
 
@@ -16,4 +13,6 @@ const validatePrice = function (price) {
   return status;
 };
 
-console.log(validatePrice(preco))
+module.exports = {
+  validatePrice
+}

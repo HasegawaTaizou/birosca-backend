@@ -1,6 +1,3 @@
-
-let array = ["aaa", "bbb"]
-
 const validateIngredients = function (ingredients) {
   let status = true;
 
@@ -17,4 +14,6 @@ const validateIngredients = function (ingredients) {
   return status;
 };
 
-console.log(validateIngredients(array))
+module.exports = {
+  validateIngredients
+}

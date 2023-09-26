@@ -1,7 +1,5 @@
 const FOOD_TYPES = ["ACAI", "SNACK", "DRINK", "DIVERSE"];
 
-let type = "Acai";
-
 const validateFoodType = function (foodType) {
   let status = true;
 
@@ -17,4 +15,6 @@ const validateFoodType = function (foodType) {
   return status;
 };
 
-console.log(validateFoodType(type))
+module.exports = {
+  validateFoodType
+}
