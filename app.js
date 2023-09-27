@@ -128,6 +128,21 @@ app.post("/api/v1/admin", cors(), bodyJSON, async function (request, response) {
   response.json(resultAdmin);
 });
 
+//Admin Update
+app.put(
+  "/api/v1/admin-update",
+  cors(),
+  bodyJSON,
+  async function (request, response) {
+    const bodyData = request.body;
+
+    const resultUpdateData = await adminController.adminUpdate(bodyData);
+
+    response.status(resultUpdateData.status);
+    response.json(resultUpdateData);
+  }
+);
+
 app.listen(8080, function () {
   console.log("Server waiting for requests on port 8080!");
 });

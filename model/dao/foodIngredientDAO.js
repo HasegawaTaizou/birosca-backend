@@ -26,7 +26,7 @@ const insertFoodIngredient = async function (foodId, foodIngredientData) {
 
     return true;
   } catch (error) {
-    console.error("Erro ao criar o food Ingredient:", error);
+    return false;
   } finally {
     await prisma.$disconnect();
   }

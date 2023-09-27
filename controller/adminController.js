@@ -19,8 +19,7 @@ const loginAdmin = async function (loginData) {
 
     if (adminData == null || adminData == undefined) {
       return message.LOGIN_INCORRECT;
-    } 
-    else if (adminData) {
+    } else if (adminData) {
       const jsonAdminData = {};
 
       const token = jwt.sign(
@@ -83,8 +82,34 @@ const adminGet = async function (adminEmail) {
   }
 };
 
+const adminUpdate = async function (adminUpdate) {
+  if (
+    !validateEmail(adminUpdate.email) ||
+    !validatePassword(adminUpdate.password)
+  ) {
+    return message.ERROR_REQUIRED_DATA;
+  } else {
+    const adminData = await adminDAO.getAdminByEmail(adminUpdate.email);
+    if (
+      adminData == null ||
+      adminData == undefined ||
+      adminData.email != adminUpdate.email
+    ) {
+      return message.ERROR_RESOURCE_NOT_FOUND;
+    } else if (adminData.email == adminUpdate.email) {
+      const status = await adminDAO.updateAdmin(adminUpdate);
+      if (status) {
+        return message.UPDATED_ITEM;
+      }
+    } else {
+      return message.ERROR_INTERNAL_SERVER;
+    }
+  }
+};
+
 module.exports = {
   loginAdmin,
   adminInsert,
   adminGet,
+  adminUpdate,
 };

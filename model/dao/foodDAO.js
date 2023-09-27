@@ -30,7 +30,7 @@ const insertFood = async function (foodData) {
 
     return true;
   } catch (error) {
-    console.error("Erro ao criar a comida:", error);
+    return false;
   } finally {
     await prisma.$disconnect();
   }
@@ -135,7 +135,9 @@ const updateFood = async function (foodId, foodData) {
   // Delete Ingredients
   if (responseFoodIngredients.length > foodData.ingredients.length) {
     const newIngredients = foodData.ingredients.slice(0, indexIngredients);
-    const ingredientsToRemove = responseFoodIngredients.slice(newIngredients.length);
+    const ingredientsToRemove = responseFoodIngredients.slice(
+      newIngredients.length
+    );
 
     //Delete
     ingredientsToRemove.forEach(async function (ingredient) {

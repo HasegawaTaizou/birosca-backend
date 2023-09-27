@@ -13,7 +13,7 @@ const adminLogin = async function (loginData) {
       const loginMatch = emailMatch && passwordMatch;
       if (loginMatch) {
         return admin;
-      } 
+      }
     }
   } catch (error) {
     return false;
@@ -31,7 +31,7 @@ const insertAdmin = async function (adminData) {
 
     return true;
   } catch (error) {
-    console.error("Erro ao criar o admin:", error);
+    return false;
   } finally {
     await prisma.$disconnect();
   }
@@ -50,8 +50,33 @@ const getAdminByEmail = async function (adminEmail) {
   }
 };
 
+const updateAdmin = async function (adminData) {
+  try {
+    const admin = await getAdminByEmail(adminData.email);
+
+    if (admin.email == adminData.email) {
+      const updateAdminData = await prisma.admin.updateMany({
+        where: {
+          email: adminData.email,
+        },
+        data: {
+          email: adminData.email,
+          password: adminData.password,
+        },
+      });
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 module.exports = {
   adminLogin,
   insertAdmin,
   getAdminByEmail,
+  updateAdmin,
 };
