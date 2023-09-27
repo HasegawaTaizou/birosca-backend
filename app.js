@@ -2,7 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+//SWAGGER
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocs = require("./src/swagger.json");
+
 const app = express();
+
+//SWAGGER DOCUMENTATION
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use((request, response, next) => {
   response.header("Access-Control-Allow-Origin", "*");
