@@ -12,7 +12,7 @@ const app = express();
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use((request, response, next) => {
-  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Origin", "https://birosca-do-acai.netlify.app");
   response.header(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
