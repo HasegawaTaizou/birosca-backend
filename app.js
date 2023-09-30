@@ -11,18 +11,8 @@ const app = express();
 //SWAGGER DOCUMENTATION
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// app.use((request, response, next) => {
-//   response.header("Access-Control-Allow-Origin", "*");
-//   response.header(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, PUT, DELETE, OPTIONS"
-//   );
-//   app.use(cors());
-//   next();
-// });
-
 app.use((request, response, next) => {
-  response.header("Access-Control-Allow-Origin", "https://birosca-do-acai.netlify.app");
+  response.header("Access-Control-Allow-Origin", "*");
   response.header(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
@@ -30,6 +20,16 @@ app.use((request, response, next) => {
   app.use(cors());
   next();
 });
+
+// app.use((request, response, next) => {
+//   response.header("Access-Control-Allow-Origin", "https://birosca-do-acai.netlify.app");
+//   response.header(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, OPTIONS"
+//   );
+//   app.use(cors());
+//   next();
+// });
 
 const bodyJSON = bodyParser.json();
 
